@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+  <title>Adventure Game (title pending lol)</title>
+  <script type="text/javascript" src="vendor/phaser.min.js"></script>
+  <script type="text/javascript" src="Boot.js"></script>
+  <script type="text/javascript" src="Preloader.js"></script>
+  <script type="text/javascript" src="TitleScreen.js"></script>
+  <script type="text/javascript" src="Game.js"></script>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <script type="text/javascript">
+    window.onload = function() {
+      var game = new Phaser.Game("100%", "100%", Phaser.AUTO, "");
+      game.state.add('Boot', AdventureGame.Boot);
+      game.state.add('Preloader', AdventureGame.Preloader);
+      game.state.add('TitleScreen', AdventureGame.TitleScreen);
+      game.state.add('Game', AdventureGame.Game);
+
+      game.state.start('Boot');
+    }
+  </script>
+
+</body>
+</html>
