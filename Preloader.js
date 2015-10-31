@@ -13,6 +13,7 @@ AdventureGame.Preloader.prototype = {
     this.load.image('new-game-btn', 'images/btns/new-game.png');
     this.load.image('island', 'images/island.png');
     this.load.image('crate', 'images/crate.png');
+    this.load.spritesheet('dansheet', 'images/dansheet.png', 16, 16);
     this.load.spritesheet('dude', 'images/dude.png', 32, 48);
   },
 
