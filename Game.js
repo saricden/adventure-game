@@ -3,6 +3,8 @@ AdventureGame.Game = function(game) {
   this.player;
   this.crate;
   this.cursors;
+
+  this.test = false;
 };
 
 AdventureGame.Game.prototype = {
@@ -32,6 +34,7 @@ AdventureGame.Game.prototype = {
     crate.scale.setTo(0.8, 0.8);
 
     cursors = this.input.keyboard.createCursorKeys();
+    this.input.maxPointers = 2;
   },
 
   update: function() {
@@ -42,21 +45,36 @@ AdventureGame.Game.prototype = {
     player.body.velocity.x = 0;
     crate.body.velocity.x = 0;
 
-    if (cursors.left.isDown) {
+    if (this.input.pointer1.isDown) {
+      var wx = this.world.centerX;
+      var px = this.input.pointer1.x;
+      player.body.velocity.x = (px < wx) ? -150 : 150;
+
+      if (this.input.pointer2.isDown && player.body.touching.down) {
+        player.body.velocity.y = -175;
+      }
+    }
+    else if (cursors.left.isDown) {
       player.body.velocity.x = -150;
-      player.animations.play('left');
     }
     else if (cursors.right.isDown) {
       player.body.velocity.x = 150;
+    }
+    
+    if (cursors.up.isDown && player.body.touching.down) {
+      player.body.velocity.y = -175;
+    }
+
+    if (player.body.velocity.x < 0) {
+      player.animations.play('left');
+    }
+    else if (player.body.velocity.x > 0) {
       player.animations.play('right');
     }
     else {
       player.animations.stop();
       player.frame = 4;
     }
-    
-    if (cursors.up.isDown && player.body.touching.down) {
-      player.body.velocity.y = -175;
-    }
+
   }
 };
