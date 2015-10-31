@@ -4,7 +4,9 @@ AdventureGame.Game = function(game) {
   this.crate;
   this.cursors;
 
-  this.test = false;
+  this.guardian;
+  this.castle;
+  this.mysticEgg;
 };
 
 AdventureGame.Game.prototype = {
@@ -18,6 +20,8 @@ AdventureGame.Game.prototype = {
     island = platforms.create(this.world.centerX-150, this.world.centerY, 'island');
     island.body.immovable = true;
     island = platforms.create(this.world.centerX+50, this.world.centerY-30, 'island');
+    island.body.immovable = true;
+    island = platforms.create(this.world.centerX-300, this.world.centerY+200, 'island');
     island.body.immovable = true;
 
     player = this.add.sprite(this.world.centerX-80, this.world.centerY-50, 'dude');
@@ -33,14 +37,60 @@ AdventureGame.Game.prototype = {
     crate.body.collideWorldBounds = false;
     crate.scale.setTo(0.8, 0.8);
 
+    this.guardian = this.add.sprite(this.world.centerX-212, this.world.centerY + 164, 'dansheet');
+    this.guardian.scale.setTo(2);
+    this.guardian.animations.add('walk', [1, 2], 4, true);
+    this.guardian.animations.play('walk');
+    this.guardian.anchor.setTo(0.5, 0);
+    this.physics.arcade.enable(this.guardian);
+    this.guardian.body.gravity.y = 600;
+    // warning: ECMAScript 6 arrow syntax not supported in all browsers! keep note!
+    this.guardian.update = () => {
+      this.guardian.scale.x = (player.x < this.guardian.x) ? -2 : 2;
+      if (this.guardian.eggViolated && this.guardian.body.touching.down) { this.guardian.body.velocity.y = -225; } };
+
+    this.castle = this.add.tileSprite(this.world.centerX-300, this.world.centerY + 72, 64, 64, 'dansheet', 3);
+    this.castle.scale.setTo(2);
+    this.world.sendToBack(this.castle);
+
+    {
+      var newBlock = this.add.sprite(this.world.centerX-300, this.world.centerY + 72 + 96, 'dansheet', 7);
+      newBlock.scale.setTo(2);
+      this.physics.arcade.enable(newBlock);
+      newBlock.body.immovable = true;
+      platforms.add(newBlock);
+      newBlock = this.add.sprite(this.world.centerX-300 + 32, this.world.centerY + 72 + 96, 'dansheet', 7);
+      newBlock.scale.setTo(2);
+      this.physics.arcade.enable(newBlock);
+      newBlock.body.immovable = true;
+      platforms.add(newBlock);
+      newBlock = this.add.sprite(this.world.centerX-300, this.world.centerY + 72 + 64, 'dansheet', 7);
+      newBlock.scale.setTo(2);
+      this.physics.arcade.enable(newBlock);
+      newBlock.body.immovable = true;
+      platforms.add(newBlock);
+    }
+
+    this.mysticEgg = this.add.sprite(this.world.centerX-300, this.world.centerY + 72 + 32, 'dansheet', 0);
+    this.mysticEgg.scale.setTo(2);
+    this.physics.arcade.enable(this.mysticEgg);
+    this.mysticEgg.body.gravity.y = 200;
+    this.mysticEgg.update = () => { this.guardian.eggViolated = !this.mysticEgg.inCamera; };
+
     cursors = this.input.keyboard.createCursorKeys();
     this.input.maxPointers = 2;
+
+    this.game.camera.follow(player);
+    this.game.camera.bounds = null;
   },
 
   update: function() {
     this.physics.arcade.collide(player, platforms);
+    this.physics.arcade.collide(player, this.mysticEgg);
     this.physics.arcade.collide(crate, platforms);
     this.physics.arcade.collide(player, crate);
+    this.physics.arcade.collide(this.guardian, platforms);
+    this.physics.arcade.collide(this.mysticEgg, platforms);
 
     player.body.velocity.x = 0;
     crate.body.velocity.x = 0;
@@ -76,5 +126,8 @@ AdventureGame.Game.prototype = {
       player.frame = 4;
     }
 
+    if (cursors.up.isDown && player.body.touching.down) {
+      player.body.velocity.y = -175;
+    }
   }
 };
