@@ -12,6 +12,7 @@ AdventureGame.Game = function(game) {
 AdventureGame.Game.prototype = {
   create: function() {
     this.stage.backgroundColor = '#2AE';
+    var rootFn = this;
 
     this.physics.startSystem(Phaser.Physics.ARCADE);
     platforms = this.add.group();
@@ -44,10 +45,12 @@ AdventureGame.Game.prototype = {
     this.guardian.anchor.setTo(0.5, 0);
     this.physics.arcade.enable(this.guardian);
     this.guardian.body.gravity.y = 600;
-    // warning: ECMAScript 6 arrow syntax not supported in all browsers! keep note!
-    this.guardian.update = () => {
-      this.guardian.scale.x = (player.x < this.guardian.x) ? -2 : 2;
-      if (this.guardian.eggViolated && this.guardian.body.touching.down) { this.guardian.body.velocity.y = -225; } };
+    this.guardian.update = function() {
+      rootFn.guardian.scale.x = (player.x < rootFn.guardian.x) ? -2 : 2;
+      if (rootFn.guardian.eggViolated && rootFn.guardian.body.touching.down) {
+        rootFn.guardian.body.velocity.y = -225;
+      }
+    };
 
     this.castle = this.add.tileSprite(this.world.centerX-300, this.world.centerY + 72, 64, 64, 'dansheet', 3);
     this.castle.scale.setTo(2);
@@ -75,7 +78,9 @@ AdventureGame.Game.prototype = {
     this.mysticEgg.scale.setTo(2);
     this.physics.arcade.enable(this.mysticEgg);
     this.mysticEgg.body.gravity.y = 200;
-    this.mysticEgg.update = () => { this.guardian.eggViolated = !this.mysticEgg.inCamera; };
+    this.mysticEgg.update = function() {
+      rootFn.guardian.eggViolated = !rootFn.mysticEgg.inCamera;
+    };
 
     cursors = this.input.keyboard.createCursorKeys();
     this.input.maxPointers = 2;
