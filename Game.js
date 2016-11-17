@@ -7,6 +7,10 @@ AdventureGame.Game = function(game) {
   this.guardian;
   this.castle;
   this.mysticEgg;
+
+  this.fruit;
+
+  this.jumpHeight = 175;
 };
 
 AdventureGame.Game.prototype = {
@@ -22,8 +26,24 @@ AdventureGame.Game.prototype = {
     island.body.immovable = true;
     island = platforms.create(this.world.centerX+50, this.world.centerY-30, 'island');
     island.body.immovable = true;
+    island = platforms.create(this.world.centerX+300, this.world.centerY-200, 'island');
+    island.body.immovable = true;
     island = platforms.create(this.world.centerX-300, this.world.centerY+200, 'island');
     island.body.immovable = true;
+    island = platforms.create(this.world.centerX-500, this.world.centerY+200, 'island');
+    island.body.immovable = true;
+
+    this.fruit = this.add.sprite(this.world.centerX-450, this.world.centerY+168, 'fruit');
+    this.fruit.animations.add('glow', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
+    this.fruit.animations.play('glow');
+    this.fruit.scale.setTo(1.5);
+    this.physics.arcade.enable(this.fruit);
+
+    this.portal = this.add.sprite(this.world.centerX+350, this.world.centerY-300, 'portal');
+    this.portal.animations.add('glow', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
+    this.portal.animations.play('glow');
+    this.portal.scale.setTo(2);
+    this.physics.arcade.enable(this.portal);
 
     player = this.add.sprite(this.world.centerX-80, this.world.centerY-50, 'dude');
     this.physics.arcade.enable(player);
@@ -90,12 +110,17 @@ AdventureGame.Game.prototype = {
   },
 
   update: function() {
+    // console.log(this.fruit);
     this.physics.arcade.collide(player, platforms);
     this.physics.arcade.collide(player, this.mysticEgg);
+    // ;
     this.physics.arcade.collide(crate, platforms);
     this.physics.arcade.collide(player, crate);
     this.physics.arcade.collide(this.guardian, platforms);
     this.physics.arcade.collide(this.mysticEgg, platforms);
+
+    this.physics.arcade.overlap(player, this.fruit, this.getFruit, null, this);
+    this.physics.arcade.overlap(player, this.portal, this.teleport, null, this);
 
     player.body.velocity.x = 0;
     crate.body.velocity.x = 0;
@@ -106,7 +131,7 @@ AdventureGame.Game.prototype = {
       player.body.velocity.x = (px < wx) ? -150 : 150;
 
       if (this.input.pointer2.isDown && player.body.touching.down) {
-        player.body.velocity.y = -175;
+        player.body.velocity.y = -this.jumpHeight;
       }
     }
     else if (cursors.left.isDown) {
@@ -117,7 +142,7 @@ AdventureGame.Game.prototype = {
     }
     
     if (cursors.up.isDown && player.body.touching.down) {
-      player.body.velocity.y = -175;
+      player.body.velocity.y = -this.jumpHeight;
     }
 
     if (player.body.velocity.x < 0) {
@@ -132,7 +157,17 @@ AdventureGame.Game.prototype = {
     }
 
     if (cursors.up.isDown && player.body.touching.down) {
-      player.body.velocity.y = -175;
+      player.body.velocity.y = -this.jumpHeight;
     }
+
+  },
+
+  getFruit: function(player, fruit) {
+    fruit.kill();
+    this.jumpHeight = 400;
+  },
+
+  teleport: function(player, portal) {
+    this.state.start('Game2');
   }
 };

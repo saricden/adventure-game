@@ -15,6 +15,8 @@ AdventureGame.Preloader.prototype = {
     this.load.image('crate', 'images/crate.png');
     this.load.spritesheet('dansheet', 'images/dansheet.png', 16, 16);
     this.load.spritesheet('dude', 'images/dude.png', 32, 48);
+    this.load.spritesheet('fruit', 'images/glowing-fruit.png', 22, 22);
+    this.load.spritesheet('portal', 'images/portal.png', 22, 50);
   },
 
   create: function() {

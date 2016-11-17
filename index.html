@@ -8,6 +8,7 @@
   <script type="text/javascript" src="Preloader.js"></script>
   <script type="text/javascript" src="TitleScreen.js"></script>
   <script type="text/javascript" src="Game.js"></script>
+  <script type="text/javascript" src="Game2.js"></script>
   <style type="text/css">
     html, body {
       margin: 0;
@@ -24,6 +25,7 @@
       game.state.add('Preloader', AdventureGame.Preloader);
       game.state.add('TitleScreen', AdventureGame.TitleScreen);
       game.state.add('Game', AdventureGame.Game);
+      game.state.add('Game2', AdventureGame.Game2);
 
       game.state.start('Boot');
     }
